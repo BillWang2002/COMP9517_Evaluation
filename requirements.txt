@@ -1,0 +1,9 @@
+# Python 3.12 arm64; validated on Apple M4 / MPS, FP32, batch 1.
+torch==2.14.0
+torchvision==0.29.2
+torchmetrics==1.9.0
+pycocotools==2.0.11
+numpy==2.5.4
+Pillow==13.0.0
+ultralytics==8.4.193
+matplotlib==3.11.2
