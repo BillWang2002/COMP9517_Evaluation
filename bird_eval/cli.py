@@ -14,6 +14,11 @@ from .runtime import Detector,environment,model_hashes,predict_split,samples_for
 from .settings import FUSION_PARAMETERS,MODELS,SPLITS,WORKING_SCORES
 
 
+def weights_command(args):
+    from .weights import fetch_weights
+    print(json.dumps(fetch_weights(args.models),indent=2))
+
+
 def predict_command(args):
     out=output_directory(args.output)
     cache=predict_split(args.model,args.split,args.device,args.limit,args.allow_test)
@@ -131,6 +136,8 @@ def main():
     commands=parser.add_subparsers(dest='command',required=True)
     check=commands.add_parser('check',help='Check official val/test filename pairing and fixed weight hashes; no inference.')
     check.set_defaults(handler=lambda args:print(json.dumps({'splits':{s:len(samples_for(s,allow_test=True)) for s in SPLITS},'weights':model_hashes('FUSION')},indent=2)))
+    p=commands.add_parser('fetch-weights',help='Download private-release A1/B0 weights using existing Git login and verify SHA-256.')
+    p.add_argument('--models',nargs='+',choices=list(MODELS),default=list(MODELS));p.set_defaults(handler=weights_command)
     def runtime_options(p):p.add_argument('--device',choices=['auto','cpu','mps','cuda'],default='auto')
     def split_options(p):
         p.add_argument('--split',choices=['val','test'],default='val');p.add_argument('--limit',type=int)

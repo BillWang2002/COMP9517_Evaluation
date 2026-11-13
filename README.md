@@ -32,15 +32,22 @@ git clone https://github.com/BillWang2002/COMP9517_Evaluation.git
 cd COMP9517_Evaluation
 ```
 
-私有仓库只包含源码、测试、本文、依赖及`data/splits.csv`。克隆后，按上面的首次安装步骤建立环境，并另外放入以下文件再运行`check`：
+Git主分支包含源码、测试、本文、依赖及`data/splits.csv`，两份权重发布在同一私有仓库的[weights-v1.0 Release](https://github.com/BillWang2002/COMP9517_Evaluation/releases/tag/weights-v1.0)。克隆后先安装环境、准备数据，再获取权重：
 
 | 本地路径 | 需要准备的内容 |
 |---|---|
 | `data/beach_bird/images/{val,test}/` | 官方val 291张、test 240张图片 |
 | `data/beach_bird/labels/{val,test}/` | 同名YOLO标签，保留空标签文件 |
-| `weights/A/A1.pth`、`weights/B/B0.pt` | 组员提供的两份固定权重；哈希由`check`核对 |
+| `weights/A/A1.pth`、`weights/B/B0.pt` | 从Release下载的两份固定权重；自动核对SHA-256 |
 
-图片、标签、权重、运行输出和`.venv`均被Git忽略，不随源码上传。数据来源见文末；权重通过组内渠道另行提供。
+```bash
+python run.py fetch-weights
+python run.py check
+```
+
+`fetch-weights`复用本机Git的GitHub登录（或`GITHUB_TOKEN`环境变量），需要私有仓库读取权限；返回下载路径、SHA-256及`downloaded_and_verified`。本地已有正确权重时返回`already_valid`；不匹配的旧文件不会被覆盖。也可在Release页面手动下载`A1.pth`、`B0.pt`，放入表中对应路径。
+
+图片、标签、运行输出和`.venv`不上传；权重通过Release提供，下载后的`weights/`仍由Git忽略。数据来源见文末。
 
 ## 2. 完整验证集评估
 
@@ -165,7 +172,7 @@ python run.py evaluate --models A1 B0 --split test --allow-test --device mps --o
 python -m unittest discover -s tests -v
 ```
 
-已测返回：**Ran 14 tests … OK**。只做数值与接口测试，不运行检测器、不解码test。
+已测返回：**Ran 19 tests … OK**。只做数值与接口测试，不运行检测器、不解码test；新增权重校验、下载失败清理及跨域重定向凭据隔离检查。
 
 - 主AP使用COCO maxDets=100，补充300；保留全部缓存分数，不按工作阈值预筛。CSV指标为0–1，本文为百分数。
 - 共同诊断为score=0.5、IoU=0.5；工作点P/R/F1按全体TP/FP/FN汇总。目标检测TN不定义；空标签不保证无鸟。
