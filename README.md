@@ -2,8 +2,6 @@
 
 A1 = Faster R-CNN，B0 = YOLOv8s，FUSION = B0 + 选择性补入A1预测。**默认最终方法：B0，工作阈值0.4。**
 
-从外层Project进入：`cd COMP9517_Evaluation`，然后运行以下命令。数据位于`data/beach_bird/`，权重为`weights/A/A1.pth`、`weights/B/B0.pt`；参数在`bird_eval/settings.py`。输出目录或图片若已存在，请使用新的名称；不会覆盖已有结果。
-
 ## 1. 环境与文件检查
 
 已有环境：
@@ -177,12 +175,3 @@ python -m unittest discover -s tests -v
 - 主AP使用COCO maxDets=100，补充300；保留全部缓存分数，不按工作阈值预筛。CSV指标为0–1，本文为百分数。
 - 共同诊断为score=0.5、IoU=0.5；工作点P/R/F1按全体TP/FP/FN汇总。目标检测TN不定义；空标签不保证无鸟。
 - A1/B0输出分数下限为0.05/0.001，内部NMS IoU为0.5/0.7，最多300框。训练与预处理不同，此处比较实际系统。
-- 本目录只含评估，不含训练。提交源码时排除环境、权重、图片/标签与运行输出；全组训练代码保留在外层交接包。
-
-## 来源与许可
-
-A1权重、多尺度训练与数据/模型/指标核心来自2号交接包，原A0基线来自1号/丁同学；B0来自B线。第5号负责统一评估、计时、选择性后处理和整合演示。使用过AI编码辅助，应按课程规定披露。
-
-实现依赖[PyTorch](https://pytorch.org/)、[TorchVision](https://github.com/pytorch/vision)、[Ultralytics](https://github.com/ultralytics/ultralytics)、[TorchMetrics](https://github.com/Lightning-AI/torchmetrics)、[COCO API](https://github.com/cocodataset/cocoapi)、[NumPy](https://numpy.org/)、[Pillow](https://python-pillow.org/)、[Matplotlib](https://matplotlib.org/)，遵守各自许可证。方法参考：[Faster R-CNN](https://arxiv.org/abs/1506.01497)、[FPN](https://arxiv.org/abs/1612.03144)、[Fast R-CNN／多尺度训练](https://arxiv.org/abs/1504.08083)。
-
-数据为Kai Liu的[Beach Bird Detection Dataset v1.0](https://www.kaggle.com/datasets/liugalhigh/beach-bird)，Kaggle，2026。许可为Other，源图像来自[Wikimedia Commons](https://commons.wikimedia.org/)、[Pexels](https://www.pexels.com/)、[Flickr](https://www.flickr.com/)、[Visual WetlandBirds](https://github.com/3dperceptionlab/Visual-WetlandBirds)、[Big Bird](https://doi.org/10.48610/27809f1)等，仍须遵守源许可与署名条件；版权问题联系liukai@tio.org.cn。
